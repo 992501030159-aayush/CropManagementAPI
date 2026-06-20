@@ -1,0 +1,9 @@
+# Python Cache
+__pycache__/
+
+# complied python files
+*.pyc
+.env
+.vdcode/
+.idea/
+*.log
