@@ -3,7 +3,10 @@ __pycache__/
 
 # complied python files
 *.pyc
+# Environment files
 .env
+# IDE FILES
 .vdcode/
 .idea/
+# Log files
 *.log
