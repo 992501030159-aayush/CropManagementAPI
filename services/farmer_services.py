@@ -1,18 +1,18 @@
 from schemas.schema import Farmers
 from fastapi import HTTPException
 from utils.logger import logger
+from sqlalchemy.orm import Session
+from models.Farmer_model import Farmer as farmer_model
 
-def get_farmer_service(db):
+def get_farmer_service(db:Session):
     try:
-        cursor = db.cursor(dictionary = True)
-        cursor.execute("Select * FROM Farmers")
-        data =  cursor.fetchall()
+        data = db.query(farmer_model).all()
         logger.info(f"Fetched {len(data)} data successfully")
         return data
     except Exception:
         logger.exception("Error Displaying the farmers data!")
         raise
-def get_farmer_id_service(Id : int,db):
+def get_farmer_id_service(Id : int,db:Session):
     try:
         if (Id<=0):
             raise HTTPException(
@@ -20,9 +20,7 @@ def get_farmer_id_service(Id : int,db):
                 detail="Invalid Id input"
             )
         
-        cursor = db.cursor(dictionary = True)
-        cursor.execute("Select * FROM Farmers where Id = %s",(Id,))
-        data = cursor.fetchone()
+        data = db.query(farmer_model).filter(farmer_model.Id==Id).first()
         if not data:
             raise HTTPException(
                 status_code=404,
@@ -36,14 +34,18 @@ def get_farmer_id_service(Id : int,db):
         logger.exception(f"Could not fetch Farmer with id {Id}")
         raise
 
-def create_farmer_service(farmer : Farmers,db):
+def create_farmer_service(farmer : Farmers,db:Session):
     try:
-        cursor = db.cursor(dictionary = True)
-        cursor.execute(
-            "INSERT INTO Farmers(Id, FarmerName, MobileNumber, Address, UserId) VALUES(%s,%s,%s,%s,%s)",
-            (farmer.Id, farmer.FarmerName, farmer.MobileNumber, farmer.Address, farmer.UserId),
+        db_user =  farmer_model(
+            Id = farmer.Id,
+            FarmerName = farmer.FarmerName,
+            MobileNumber = farmer.MobileNumber,
+            Address = farmer.Address,
+            UserId = farmer.UserId
         )
+        db.add(db_user)
         db.commit()
+        db.refresh(db_user)
         logger.info(f"New farmer was inserted with Id {farmer.Id}")
         return {"message" : "Farmer inserted Successfully"}
     except Exception:
@@ -51,20 +53,20 @@ def create_farmer_service(farmer : Farmers,db):
         logger.exception("Error while creating the farmer")
         raise
 
-def delete_farmer_service(Id : int,db):
+def delete_farmer_service(Id : int,db:Session):
     try:
         if (Id<=0):
             raise HTTPException(
                 status_code=400,
                 detail="Invalid Id input"
             )
-        cursor = db.cursor(dictionary = True)
-        cursor.execute("DELETE From Farmers where Id = %s",(Id,))
-        if cursor.rowcount == 0:
+        db_user = db.query(farmer_model).filter(farmer_model.Id==Id).first()
+        if not db_user:
             raise HTTPException(
                 status_code=404,
                 detail="Record not found"
         )
+        db.delete(db_user)
         db.commit()
         logger.info(f"Farmer with id {Id} deleted successfully")
         return {"message":"Farmer deleted successfully"}
@@ -76,24 +78,26 @@ def delete_farmer_service(Id : int,db):
         raise
 
 
-def update_farmer_service(Id:int,farmer:Farmers,db):
+def update_farmer_service(Id:int,farmer:Farmers,db:Session):
     try:
         if (Id<=0):
             raise HTTPException(
                 status_code=400,
                 detail="Invalid Id Input"
             )
-        cursor = db.cursor()
-        cursor.execute(
-            "Update Farmers SET FarmerName = %s, MobileNumber = %s, Address = %s, UserId = %s WHERE Id = %s",
-            (farmer.FarmerName, farmer.MobileNumber, farmer.Address, farmer.UserId, Id),
-        )
-        if cursor.rowcount == 0:
+
+        db_user = db.query(farmer_model).filter(farmer_model.Id==Id).first()
+        if not db_user:
             logger.warning(f"FARMER with id {Id} not found for update")
             raise HTTPException(
                 status_code=404,
                 detail="Record not found"
             )
+        db_user.FarmerName = farmer.FarmerName,
+        db_user.MobileNumber = farmer.MobileNumber,
+        db_user.Address = farmer.Address,
+        db_user.UserId = farmer.UserId
+
         db.commit()
         logger.info(f"Farmer with Id {Id} was updated successfully!")
         return {"message" : "records updated successfully"}
@@ -103,4 +107,6 @@ def update_farmer_service(Id:int,farmer:Farmers,db):
         db.rollback()
         logger.exception(f"Failed to update Farmer with id {Id}")
         raise
+
+
     
