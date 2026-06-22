@@ -7,4 +7,6 @@ class Farmer(Base):
     FarmerName = Column(String(50))
     MobileNumber = Column(String(10),unique=True)
     Address = Column(String(100))
-    UserId = Column(Integer,ForeignKey = ("Users.Id"),nullable=False)
+    UserId = Column(Integer,ForeignKey("Users.Id"),nullable=False)
+
+    

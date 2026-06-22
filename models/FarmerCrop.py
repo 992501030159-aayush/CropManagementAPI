@@ -11,3 +11,4 @@ class FarmerCrop(Base):
     SowingDate = Column(Date)
     ExpectedHarvestDate = Column(Date)
     Status =  Column(String(20))
+
