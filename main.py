@@ -6,6 +6,9 @@ from routers.farmercrop_router import router as farmercrop_router
 from routers.crops_router import router as cropmaster_router
 from routers.CropMonitoring_router import router as cropmonitor_router
 
+from models import *
+from database.sqlalchemy_db import Base,engine
+Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 app.include_router(

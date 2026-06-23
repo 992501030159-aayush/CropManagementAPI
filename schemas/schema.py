@@ -27,7 +27,7 @@ class FarmerCrops(BaseModel):
     Status : str
 class CropMonitoring(BaseModel):
     Id : int
-    FarmerCropID : int
+    FarmerCropId : int
     MonitoringDate : date
     PlantHeight : float
     HealthStatus : str
@@ -41,6 +41,5 @@ class CropTrackingHistory(BaseModel):
     UpdatedOn : date
     UpdatedBy : str
 class LoginUser(BaseModel):
-    Email : str 
+    Email : str
     Password : str
-    
