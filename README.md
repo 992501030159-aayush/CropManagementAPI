@@ -29,38 +29,57 @@ http://127.0.0.1:8000/docs
 
 ```text
 CropManagementAPI/
-│
-├── database/
-│   └── connection.py
-│
-├── models/
-│
-├── routers/
-│   ├── CropMonitoring_router.py
-│   ├── crops_router.py
-│   ├── farmercrop_router.py
-│   ├── farmers_router.py
-│   └── Users_router.py
-│
-├── schemas/
-│   └── schema.py
-│
-├── services/
-│   ├── CropMonitoring_services.py
-│   ├── cropsmaster_services.py
-│   ├── farmercrop_services.py
-│   ├── farmer_services.py
-│   └── Users_services.py
-│
-├── utils/
-│   ├── jwt_handler.py
-│   └── logger.py
-│
-├── .env
-├── .gitignore
-├── main.py
-├── README.md
-└── requirements.txt
+│.env
+│   .gitignore
+│   app.log
+│   main.py
+│   README.md
+│   requirements.txt
+│   
+├───database
+│   │   connection.py
+│   │   sqlalchemy_db.py
+│   
+│ 
+│           
+├───models
+│   │   CropMaster_model.py
+│   │   cropmonitoring_model.py
+│   │   CropTrackingHistory..py
+│   │   FarmerCrop.py
+│   │   Farmer_model.py
+│   │   user_model.py
+│   │   
+│           
+├───routers
+│   │   CropMonitoring_router.py
+│   │   crops_router.py
+│   │   farmercrop_router.py
+│   │   farmers_router.py
+│   │   Users_router.py
+│   
+│   
+├───schemas
+│   │   schema.py
+│   │   
+│   └───__pycache__
+│           schema.cpython-313.pyc
+│           
+├───services
+│   │   CropMonitoring_services.py
+│   │   cropsmaster_services.py
+│   │   farmercrop_services.py
+│   │   farmer_services.py
+│   │   Users_services.py
+│  
+│           
+├───utils
+│   │   auth.py
+│   │   jwt_handler.py
+│   │   logger.py
+│      
+        
+
 ```
 
 
