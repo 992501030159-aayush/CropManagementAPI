@@ -6,6 +6,7 @@ class User(BaseModel):
     Email : str
     Password : str
     isActive : bool
+    Role : str
 
 class Farmers(BaseModel):
     Id : int

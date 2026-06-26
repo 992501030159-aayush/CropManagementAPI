@@ -7,3 +7,4 @@ class Users(Base):
     Email = Column(String(50),unique=True)
     Password = Column(String(260))
     isActive = Column(Boolean,default=True)
+    Role = Column(String(20))

@@ -5,17 +5,19 @@ from utils.logger import logger
 from utils.jwt_handler import create_access_token
 from models.user_model import Users as UserModel
 from sqlalchemy.orm import Session
+from fastapi.security import OAuth2PasswordRequestForm
 
-def login_user_service(user:LoginUser,db:Session):
+def login_user_service(form_data : OAuth2PasswordRequestForm
+                       , db : Session):
     try:
-        db_user = db.query(UserModel).filter(UserModel.Email == user.Email).first()
+        db_user = db.query(UserModel).filter(UserModel.Email == form_data.username).first()
         if not db_user:
             raise HTTPException(
                 status_code=401,
                 detail="Invalid Email or Password!"
             )
         if not bcrypt.checkpw(
-            user.Password.encode("utf-8"),
+            form_data.password.encode("utf-8"),
             db_user.Password.encode("utf-8")
         ):
             raise HTTPException(
@@ -25,10 +27,10 @@ def login_user_service(user:LoginUser,db:Session):
         token = create_access_token(
             {
                 "user_id": db_user.Id,
-                "email": db_user.Email
+                "Role": db_user.Role
             }
         )
-        logger.info(f"Token created successfully for user {user.Email}")
+        logger.info(f"Token created successfully for user {form_data.username}")
         return {
             "access_token": token,
             "token_type": "bearer"
@@ -84,7 +86,8 @@ def create_user_service(user: UserSchema, db):
             Full_Name=user.Full_Name,
             Email=user.Email,
             Password=hashed_password,
-            isActive=user.isActive
+            isActive=user.isActive,
+            Role = user.Role
         )
         db.add(db_user)
         db.commit()
